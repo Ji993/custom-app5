@@ -19,6 +19,7 @@ env:
 jobs:
   TestUI:
     name: Test UI
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
