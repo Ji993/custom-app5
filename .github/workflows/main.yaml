@@ -10,7 +10,7 @@ env:
   HELM_PACKAGE_NAME: 'convergeUserAdmin'
   HELM_PACKAGE_MAJOR: 1
   HELM_PACKAGE_MINOR: 0
-  HELM_PACKAGE_VERSION: ${{ env.HELM_PACKAGE_MAJOR }}.${{ env.HELM_PACKAGE_MINOR }}.${{ env.CI_PIPELINE_ID }}
+  HELM_PACKAGE_VERSION: "${{ env.HELM_PACKAGE_MAJOR }}.${{ env.HELM_PACKAGE_MINOR }}"
   AUTO_PACKAGE_NAME: 'usersWebAutomation'
   ENVIRONMENT_RELEASE_NAME: users-web
   AWS_ECR_IMAGE_NAME: users-web
@@ -26,4 +26,5 @@ jobs:
 
       - name: Run command
         run: |
+          echo "TEST"
           printenv
