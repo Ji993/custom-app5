@@ -28,4 +28,4 @@ jobs:
       - name: Run command
         run: |
           echo "TEST"
-          printenv
+          printenv | sort
