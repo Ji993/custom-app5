@@ -1,0 +1,29 @@
+name: CI/CD and code Testing
+
+on:
+  push:
+    branches:
+      - '*'
+
+env:
+  TZ: 'America/New_York'
+  HELM_PACKAGE_NAME: 'convergeUserAdmin'
+  HELM_PACKAGE_MAJOR: 1
+  HELM_PACKAGE_MINOR: 0
+  HELM_PACKAGE_VERSION: ${{ env.HELM_PACKAGE_MAJOR }}.${{ env.HELM_PACKAGE_MINOR }}.${{ env.CI_PIPELINE_ID }}
+  AUTO_PACKAGE_NAME: 'usersWebAutomation'
+  ENVIRONMENT_RELEASE_NAME: users-web
+  AWS_ECR_IMAGE_NAME: users-web
+
+
+jobs:
+  TestUI:
+    name: Test UI
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run command
+        run: |
+          printenv
