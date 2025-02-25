@@ -1,0 +1,38 @@
+# See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0
+ARG SONAR_HOST_URL
+ARG SONAR_TOKEN
+ARG SONAR_PROJECT
+ARG SONAR_PROJECT_VERSION
+ARG BRANCH_NAME
+ARG PR_NUM
+ARG PR_BASE
+ARG GIT_COMMIT_ID
+SHELL ["/bin/bash", "-c"]
+
+RUN rm -rf /var/lib/apt/lists/* \
+    && apt-get update
+RUN apt-get install -y curl libpng-dev libjpeg-dev libxi6 build-essential libgl1-mesa-glx
+RUN curl -sL https://deb.nodesource.com/setup_lts.x | bash - \
+    && apt-get install -y nodejs openjdk-17-jre
+RUN dotnet tool install --global dotnet-sonarscanner \
+    && dotnet tool list --global
+ENV PATH="${PATH}:/root/.dotnet/tools"
+
+WORKDIR /src
+COPY ./app ./app
+COPY ./app.Migrations ./app.Migrations
+WORKDIR "/src/app"
+RUN dotnet restore "peer-support.csproj"
+
+RUN dotnet-sonarscanner begin \
+                              /d:sonar.host.url=${SONAR_HOST_URL} \
+                              /k:${SONAR_PROJECT} \
+                              /v:${SONAR_PROJECT_VERSION} \
+                              /d:sonar.token=${SONAR_TOKEN} \
+                              /d:sonar.branch.name=${BRANCH_NAME} \
+                              /d:sonar.scm.revision=${GIT_COMMIT_ID} \
+                              /d:sonar.sourceEncoding="UTF-8" \
+    && dotnet build "peer-support.csproj" -c Release -o /app/build \
+    && dotnet sonarscanner end /d:sonar.login=${SONAR_TOKEN}
